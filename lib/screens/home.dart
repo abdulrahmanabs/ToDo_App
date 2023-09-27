@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_todo_app/constants/colors.dart';
+import 'package:my_todo_app/constants/styling.dart';
 import 'package:my_todo_app/models/todo.dart';
 import 'package:my_todo_app/widgets/todo_tile.dart';
 
@@ -33,6 +34,12 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void CheckTask(ToDo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone!;
+    });
+  }
+
   void Search(String searchWord) {
     setState(() {
       if (searchWord.isEmpty) {
@@ -60,87 +67,92 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: bgColor,
       appBar: buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                SearchBox(onSearchBoxChanged: Search),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 50, bottom: 20),
-                        child: Text(
-                          "All ToDos",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 25,
-                              color: purpleColor),
-                        ),
-                      ),
-                      for (ToDo todo in Tasks!.reversed)
-                        ToDoTile(
-                          todo: todo,
-                          onDeleteCallback: deleteTask,
-                        )
-                    ],
-                  ),
-                )
-              ],
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 30, top: 10),
-                child: Row(children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Container(
-                          height: 70,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8)),
-                          child: Center(
-                            child: TextField(
-                              style: TextStyle(fontSize: 25),
-                              controller: addTaskTextController,
-                              onChanged: (value) {
-                                taskText = value;
-                              },
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Add new task",
-                                  hintStyle: TextStyle(fontSize: 20),
-                                  contentPadding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20)),
-                            ),
-                          )),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      AddTask();
-                    },
-                    child: Icon(
-                      Icons.add,
-                      size: 50,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(75, 75),
-                      backgroundColor: purpleColor,
-                    ),
-                  )
-                ]),
+      body: buildAppBody(),
+    );
+  }
+
+  Padding buildAppBody() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              SizedBox(
+                height: 20,
               ),
-            )
-          ],
-        ),
+              SearchBox(onSearchBoxChanged: Search),
+              Expanded(
+                child: ListView(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 50, bottom: 20),
+                      child: Text(
+                        "All ToDos",
+                        style: kAllTodosTitleStyle,
+                      ),
+                    ),
+                    for (ToDo todo in Tasks!.reversed)
+                      ToDoTile(
+                        todo: todo,
+                        onDeleteCallback: deleteTask,
+                        onTaskChecked: CheckTask,
+                      )
+                  ],
+                ),
+              )
+            ],
+          ),
+          buildBottomRow()
+        ],
+      ),
+    );
+  }
+
+  Align buildBottomRow() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 30, top: 10),
+        child: Row(children: [buildAddTaskTextfield(), buildAddButton()]),
+      ),
+    );
+  }
+
+  Expanded buildAddTaskTextfield() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: Container(
+            height: 70,
+            decoration: BoxDecoration(
+                color: taskColor, borderRadius: BorderRadius.circular(8)),
+            child: Center(
+              child: TextField(
+                style: TextStyle(fontSize: 25),
+                controller: addTaskTextController,
+                onChanged: (value) {
+                  taskText = value;
+                },
+                decoration: kInputfieldDecoration,
+              ),
+            )),
+      ),
+    );
+  }
+
+  ElevatedButton buildAddButton() {
+    return ElevatedButton(
+      onPressed: () {
+        AddTask();
+      },
+      child: Icon(
+        Icons.add,
+        size: 50,
+      ),
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(75, 75),
+        backgroundColor: addButtonColor,
       ),
     );
   }
@@ -152,21 +164,18 @@ class _HomeState extends State<Home> {
         children: [
           Icon(
             Icons.check_circle,
+            size: 50,
             color: Colors.green, // Example of using a custom color
           ),
           SizedBox(width: 8), // Adding spacing
           Text(
             "To-Do App",
-            style: TextStyle(
-              fontWeight: FontWeight.bold, // Customizing font weight
-              fontSize: 32, // Customizing font size
-              color: Colors.purple, // Using a consistent color
-            ),
+            style: kAppBarTextStyle,
           ),
         ],
         mainAxisAlignment: MainAxisAlignment.center,
       ),
-      backgroundColor: Colors.white, // Customizing the background color
+      backgroundColor: Colors.transparent, // Customizing the background color
     );
   }
 }
@@ -180,19 +189,14 @@ class SearchBox extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 15),
       margin: EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: taskColor,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
-        onChanged: (value) {
-          onSearchBoxChanged(value);
-        },
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: "Search",
-          prefixIcon: Icon(Icons.search),
-        ),
-      ),
+          onChanged: (value) {
+            onSearchBoxChanged(value);
+          },
+          decoration: kInputfieldDecoration.copyWith(hintText: "Search")),
     );
   }
 }
