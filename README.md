@@ -1,8 +1,10 @@
 # To-Do App
 
-![App_preview](https://github.com/abdulrahmanabs/ToDo_App/assets/58333909/4f477712-9112-41e6-908a-10305320f6c0)
+
 
 The To-Do App is a feature-rich and user-friendly task management application built with Flutter. It helps you organize your daily tasks, set priorities, and mark completed tasks. This README provides an in-depth overview of the app, its features, installation instructions, usage guidelines, contribution guidelines, licensing, acknowledgments, and contact information.
+
+![App_preview](https://github.com/abdulrahmanabs/ToDo_App/assets/58333909/dc351432-275a-4ae7-b3a9-dface2d378ee)
 
 ## Features
 
